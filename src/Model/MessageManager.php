@@ -40,7 +40,7 @@ class MessageManager extends AbstractManager
 
     public function selectByUserId(int $idUser)
     {
-        $query = "SELECT * FROM " . self::TABLE . " LEFT JOIN user ON "
+        $query = "SELECT *, message.id as id_message FROM " . self::TABLE . " LEFT JOIN user ON "
             . self::TABLE . ".user_id=user.id LEFT JOIN photo ON "
             . self::TABLE . ".photo_id=photo.id WHERE " . self::TABLE . ".user_id=:id";
         $statement = $this->pdo->prepare($query);
@@ -49,12 +49,12 @@ class MessageManager extends AbstractManager
         return $statement->fetchAll();
     }
 
-    public function updateLikescounter(int $idMessage, int $likescounter)
+    public function updateLikesCounter(int $idMessage, int $likesCounter)
     {
-        $query = "UPDATE " . self::TABLE . " SET likescounter = :likescounter WHERE id=:idMessage";
+        $query = "UPDATE " . self::TABLE . " SET likes_counter = :likes_counter WHERE id=:idMessage";
         $statement = $this->pdo->prepare($query);
         $statement->bindValue('idMessage', $idMessage, \PDO::PARAM_INT);
-        $statement->bindValue('likescounter', $likescounter, \PDO::PARAM_INT);
+        $statement->bindValue('likes_counter', $likesCounter, \PDO::PARAM_INT);
         $statement->execute();
     }
 }

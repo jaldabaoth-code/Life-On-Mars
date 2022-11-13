@@ -11,19 +11,23 @@ use App\Model\PhotoManager;
 
 class HomeController extends AbstractController
 {
-    private const TEXTLENGTH = 280;
+    private const MESSAGE_LENGTH = 280;
+    private $marsed = false;
 
+    /* Index page with all messages */
     public function index()
     {
-        $requester = new CertifiedManager();
-        $apod = $requester->apod();
         // All messages from database (for each message it's data with all information of message)
         $messageManager = new MessageManager();
         $messages = $messageManager->selectAllMessageUsers('post_date', 'DESC');
         // Get information after form send (marser), like success, errors or data
         $marser = $this->marser();
+        // Refresh page after 2 secondes if we marsed (send a message)
+        if ($this->marsed === true) {
+            $this->marsed = false;
+            header("Refresh:2");
+        }
         return $this->twig->render('Home/index.html.twig', [
-            'apod' => $apod,
             'messages' => $messages,
             'success' => $marser['success'],
             'data' => $marser['data'],
@@ -32,12 +36,13 @@ class HomeController extends AbstractController
         ]);
     }
 
+    /* Show one user messages */
     public function show()
     {
         $error = "";
-        // Messages search form
+        // Search form
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get the name the user want to search
+            // Get the name which the user want to search
             $name = array_map('trim', $_POST);
         }
         // If user searched a name
@@ -45,19 +50,18 @@ class HomeController extends AbstractController
             // Get user from database with the searched name
             $userManager = new UserManager();
             $user = $userManager->selectByUsername($name['username']);
-            // If user is found in database
+            // If user is found in database, otherwise clean userMessage and user variables and fill error message
             if (!empty($user)) {
                 // Get user messages from database
                 $messageManager = new MessageManager();
                 $userMessages = $messageManager->selectByUserId($user['id']);
-                // Return user messages, user and SESSION in View
+                // Return userMessages, user and SESSION in View
                 return $this->twig->render('Home/show.html.twig', [
                     'userMessages' => $userMessages,
                     'user' => $user,
                     'SESSION' => $_SESSION
                 ]);
             } else {
-                // Clean userMessage and user variable and fill error message
                 $error = "The user don't exist";
                 $userMessages = null;
                 $user = null;
@@ -69,16 +73,25 @@ class HomeController extends AbstractController
         ]);
     }
 
+    /* Message add form */
     public function marser()
     {
         $message = '';
         $data = [];
         $errors = [];
+        // If form is submite
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // If user is not connected redirect to login page
-            if (empty($_SESSION['id'])) {
-                header("Location: /login/connection");
+            if (empty($_SESSION['id']) || empty($_SESSION)) {
+                // Redirect to login and return
+                header("Location: /Login/connection");
+                return [
+                    'success' => $message,
+                    'data' => $data,
+                    'errors' => $errors
+                ];
             }
+            // Get data from for form
             $data = array_map('trim', $_POST);
             // If empty message
             if (empty($data['content'])) {
@@ -89,7 +102,9 @@ class HomeController extends AbstractController
             if (!empty($_SESSION)) {
                 $data['user_id'] = $_SESSION['id'];
             }
+            // Declare variable for photo's new (generate) name and photo's id
             $fileNameNew = '';
+            $idPhoto = null;
             if (!empty($_FILES['files']['name'][0])) {
                 // Photo information
                 $files = $_FILES['files'];
@@ -102,17 +117,17 @@ class HomeController extends AbstractController
                     $fileError = $files['error'][$position];
                     $fileExt = explode('.', $fileName);
                     $fileExt = strtolower(end($fileExt));
-                    // If photo extension is 'jpg', 'png', 'webp' or 'gif' or fill error variable with message
+                    // If photo extension is 'jpg', 'png', 'webp' or 'gif', otherwise fill error variable with message
                     if (in_array($fileExt, $allowed)) {
-                        // If photo have no error or fill error variable with message
+                        // If photo have no error, otherwise fill error variable with message
                         if ($fileError === 0) {
-                            // If photo size is -1Mo or fill error variable with message
+                            // If photo size is -1Mo, otherwise fill error variable with message
                             if ($fileSize <= 1000000) {
                                 // Photo new (generate) name
                                 $fileNameNew = uniqid('', true) . '.' . $fileExt;
                                 // Destination of new (generate) photo
                                 $fileDestination = 'uploads/' . $fileNameNew;
-                                // Move uploaded photo to destination from temp or fill error variable with message
+                                // Move uploaded photo to destination from temp, otherwise fill error variable with message
                                 if (move_uploaded_file($fileTemp, $fileDestination)) {
                                     $uploaded[$position] = $fileDestination;
                                 } else {
@@ -142,16 +157,18 @@ class HomeController extends AbstractController
                     $idPhoto = $photoManager->insert($fileNameNew, $_SESSION['id']);
                 }
                 $messageManager = new MessageManager();
-                $userMessages = $messageManager->insert($data, $idPhoto);
+                $messageManager->insert($data, $idPhoto);
                 $message = 'Your message has been sent';
                 // Clean the data
                 $data = null;
             }
+            $this->marsed = true;
         }
+        // Fill marser array with message, data and errors
         $marser = [
             'success' => $message,
             'data' => $data,
-            'errors' => $errors,
+            'errors' => $errors
         ];
         return $marser;
     }
@@ -161,37 +178,37 @@ class HomeController extends AbstractController
     {
         // Message from form should be short
         $errors = [];
-        if (strlen($data['content']) > self::TEXTLENGTH) {
-            $errors[] = 'The message must be less than ' . self::TEXTLENGTH . ' characters';
+        if (strlen($data['content']) > self::MESSAGE_LENGTH) {
+            $errors[] = 'The message must be less than ' . self::MESSAGE_LENGTH . ' characters';
         }
         return $errors;
     }
 
     /* Add or remove likes */
-    public function add(int $id)
+    public function like(int $id)
     {
         $userMessageManager = new UserMessageManager();
-        // Get message (where star has been added) by id
+        // Get message (where star/like has been added) by id
         $messageManager = new MessageManager();
         $message = $messageManager->selectOneById($id);
         // If user is logged
         if (!empty($_SESSION)) {
             // Get user's like of message
-            $userlike = $userMessageManager->selectOne($id, $_SESSION['id']);
+            $userLike = $userMessageManager->selectOne($id, $_SESSION['id']);
             // If the message was never liked (at start there is empty like and not 0 like)
-            if (empty($userlike)) {
+            if (empty($userLike)) {
                 $userMessageManager->insert($id, $_SESSION['id'], true);
-                $message["likescounter"] += 1;
-                $messageManager->updateLikescounter($id, $message["likescounter"]);
+                $message["likes_counter"] += 1;
+                $messageManager->updateLikesCounter($id, $message["likes_counter"]);
             } else {
-                // If already liked by user then lessen otherwise increase
-                if ($userlike['user_like'] == 1) {
-                    $message["likescounter"] -= 1;
-                    $messageManager->updateLikescounter($id, $message["likescounter"]);
+                // If already liked by user then lessen the likes, otherwise increase likes
+                if ($userLike['user_like'] == 1) {
+                    $message["likes_counter"] -= 1;
+                    $messageManager->updateLikesCounter($id, $message["likes_counter"]);
                     $userMessageManager->updateUserlike($id, $_SESSION['id'], false);
-                } elseif ($userlike['user_like'] == 0) {
-                    $message["likescounter"] += 1;
-                    $messageManager->updateLikescounter($id, $message["likescounter"]);
+                } elseif ($userLike['user_like'] == 0) {
+                    $message["likes_counter"] += 1;
+                    $messageManager->updateLikesCounter($id, $message["likes_counter"]);
                     $userMessageManager->updateUserlike($id, $_SESSION['id'], true);
                 }
             }

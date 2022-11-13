@@ -41,9 +41,9 @@ CREATE TABLE message (
     )
 );
 
-ALTER TABLE message ADD likescounter INT;
+ALTER TABLE message ADD likes_counter INT;
 
-INSERT INTO message (content, user_id, likescounter, post_date) VALUES
+INSERT INTO message (content, user_id, likes_counter, post_date) VALUES
 ("I\'m sorry Dave, I\'m afraid I can\'t do that.", 1, 0,'2021-05-11 16:02:25'),
 ("Humans are too resentful.", 1, 25, '2021-05-12 09:32:25'),
 ("Dave, this conversation conserves no purpose anymore. Goodbye.", 1, 2, '2021-05-11 15:13:25'),

@@ -1,4 +1,5 @@
 @import url('style.css');
+
 .navbar {
     background-color: var(--secondary-color) !important;
 }
@@ -15,9 +16,7 @@
     font-size: 18px;
 }
 
-.search-form,
-.btn-search,
-.form-control {
+.search-form, .btn-search, .form-control {
     background-color: var(--primary-color);
     border: var(--primary-color) solid 1px;
     color: var(--secondary-color);

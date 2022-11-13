@@ -6,7 +6,7 @@ use App\Model\Connection;
 use PDO;
 
 /**
- * Abstract class handling default manager.
+ * Abstract class handling default manager
  */
 abstract class AbstractManager
 {
@@ -20,7 +20,7 @@ abstract class AbstractManager
     }
 
     /**
-     * Get all row from database.
+     * Get all row from database
      */
     public function selectAll(string $orderBy = '', string $direction = 'ASC'): array
     {
@@ -32,7 +32,7 @@ abstract class AbstractManager
     }
 
     /**
-     * Get one row from database by ID.
+     * Get one row from database by ID
      */
     public function selectOneById(int $id)
     {

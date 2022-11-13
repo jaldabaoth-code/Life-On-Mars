@@ -1,4 +1,5 @@
 @import url('style.css');
+
 h1 {
     color: var(--secondary-color);
     font-family: var(--title-font);
@@ -6,12 +7,12 @@ h1 {
     font-weight: 900;
 }
 
-.card-tweet {
+.cardTweet {
     border: var(--secondary-color) 2px solid;
     border-radius: 30px;
 }
 
-.tweet-header .profile-pic {
+.tweetHeader .profilePic {
     width: 80px;
     height: 80px;
     object-fit: cover;
@@ -29,14 +30,14 @@ h1 {
     width: 20px;
 }
 
-.tweet-img {
+.tweetImg {
     width: 95%;
     border-radius: 30px;
     height: 300px;
     object-fit: cover;
 }
 
-.post_date {
+.postDate {
     color: var(--dark-color);
 }
 
@@ -49,7 +50,7 @@ h1 {
     font-weight: 900;
 }
 
-.likes-count {
+.likesCount {
     color: var(--secondary-color);
     font-size: 15px;
     font-weight: 600;
@@ -65,7 +66,6 @@ h1 {
 }
 
 /* The Modal (background) */
-
 .modal {
     display: none;
     /* Hidden by default */
@@ -90,15 +90,13 @@ h1 {
 }
 
 /* Modal Content (image) */
-
-.modal-content {
+.modalContent {
     margin: auto;
     display: block;
     width: 90%;
 }
 
 /* Caption of Modal Image */
-
 #caption {
     margin: auto;
     display: block;
@@ -111,8 +109,7 @@ h1 {
 }
 
 /* Add Animation */
-
-.modal-content, #caption {
+.modalContent, #caption {
     animation-name: zoom;
     animation-duration: 0.6s;
 }
@@ -127,7 +124,6 @@ h1 {
 }
 
 /* The Close Button */
-
 .close {
     position: absolute;
     top: 15px;
@@ -145,9 +141,8 @@ h1 {
 }
 
 /* 100% Image Width on Smaller Screens */
-
 @media only screen and (max-width: 700px) {
-    .modal-content {
+    .modalContent {
         width: 100%;
     }
 }

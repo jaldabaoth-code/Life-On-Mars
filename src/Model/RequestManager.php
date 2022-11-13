@@ -14,8 +14,8 @@ class RequestManager
         $statusCode = $response->getStatusCode();
 
         if ($statusCode === 200) {
-            $content = $response->toArray();
             // Convert the response (here in JSON) to an PHP array
+            $content = $response->toArray();
         }
         return $content;
     }

@@ -1,29 +1,10 @@
 <?php
 
-/**
- * Database connection
- *
- *
- *
- * @author adapted from Benjamin Besse
- *
- * @link   http://fr3.php.net/manual/fr/book.pdo.php classe PDO
- */
-
 namespace App\Model;
 
 use PDO;
 use PDOException;
 
-/**
- *
- * This class only make a PDO object instanciation. Use it as below :
- *
- * <pre>
- *  $db = new Connection();
- *  $conn = $db->getPdoConnection();
- * </pre>
- */
 class Connection
 {
     private PDO $pdoConnection;
@@ -34,7 +15,6 @@ class Connection
 
     /**
      * Initialize connection
-     *
      * @access public
      */
     public function __construct()

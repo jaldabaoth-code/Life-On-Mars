@@ -7,12 +7,12 @@ h1 {
     font-weight: 900;
 }
 
-.login-form {
+.loginForm {
     border: var(--secondary-color) 2px solid;
     border-radius: 30px;
 }
 
-.login-input {
+.loginInput {
     background-color: var(--warning-color) !important;
     color: var(--light-color) !important;
     width: 97%;

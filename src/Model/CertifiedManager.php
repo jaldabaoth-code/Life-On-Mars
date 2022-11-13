@@ -14,9 +14,9 @@ class CertifiedManager extends AbstractManager
 
     private function randomDate()
     {
-        // Generate a timestamp using mt_rand.
+        // Generate a timestamp using mt_rand
         $timestamp = mt_rand(1, time());
-        // Format that timestamp into a readable date string.
+        // Format that timestamp into a readable date string
         $randomDate = date("Y-m-d H:i:s", $timestamp);
         // Print it out.
         return $randomDate;
@@ -92,8 +92,8 @@ class CertifiedManager extends AbstractManager
         $statement->bindValue('user_id', $userId['id'], \PDO::PARAM_INT);
         $statement->bindValue('photo_id', $photoId['id'], \PDO::PARAM_INT);
         $statement->execute();
-        $message_id = $statement->fetch();
+        $messageId = $statement->fetch();
         $updatePhoto = new MessageManager();
-        $updatePhoto = $updatePhoto->updatePhoto($photoId['id'], $message_id['id']);
+        $updatePhoto = $updatePhoto->updatePhoto($photoId['id'], $messageId['id']);
     }
 }
