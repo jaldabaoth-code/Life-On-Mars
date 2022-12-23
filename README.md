@@ -54,7 +54,7 @@ You can find all these routes declared in the file `src/routes.php`. This is the
 
 ### How does URL routing work ?
 
-![simple_MVC.png](.tours/simple_MVC.png)
+![simple_MVC.png](./simple_MVC.png)
 
 ### Ask for a tour !
 
